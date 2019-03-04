@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="F:\AAAAA_demo\jni"/></dataSet><dataSet config="debug"><source path="F:\AAAAA_demo\b\opencv\src\debug\jniLibs"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="E:\GitHub\HJM\jni"/></dataSet><dataSet config="debug"><source path="E:\GitHub\HJM\mpics\opencv\src\debug\jniLibs"/></dataSet></merger>

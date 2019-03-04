@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: F:\\AAAAA_demo\\b\\opencv\\src\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
+ * Original file: E:\\GitHub\\HJM\\mpics\\opencv\\src\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
  */
 package org.opencv.engine;
 /**

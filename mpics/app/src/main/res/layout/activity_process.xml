@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.ProcessActivity"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <ImageView
+            android:id="@+id/process_back"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_back"
+            android:layout_margin="10dp"/>
+
+        <ImageView
+            android:id="@+id/process_save"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_save"
+            android:layout_margin="10dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_weight="8"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp">
+        <ImageView
+            android:id="@+id/process_photo"
+            android:layout_centerInParent="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/background_pure" />
+
+        <ImageButton
+            android:id="@+id/process_contrast"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_margin="10dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/ic_contrast_"
+            android:clickable="true" />
+    </RelativeLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/button_initial"
+                android:layout_width="120dp"
+                android:layout_height="80dp"
+                android:background="#00000000"
+                android:textSize="20sp"
+                android:text="原图" />
+            <Button
+                android:id="@+id/button_gray"
+                android:layout_width="120dp"
+                android:layout_height="80dp"
+                android:background="#00000000"
+                android:textSize="20sp"
+                android:text="灰色" />
+            <Button
+                android:id="@+id/button_face_recognition"
+                android:layout_width="120dp"
+                android:layout_height="80dp"
+                android:background="#00000000"
+                android:textSize="20sp"
+                android:text="人脸识别" />
+            <Button
+                android:id="@+id/button_sketch"
+                android:layout_width="120dp"
+                android:layout_height="80dp"
+                android:background="#00000000"
+                android:textSize="20sp"
+                android:text="素描" />
+            <Button
+                android:id="@+id/button_binaryzation"
+                android:layout_width="120dp"
+                android:layout_height="80dp"
+                android:textSize="20sp"
+                android:background="#00000000"
+                android:text="黑白" />
+            <Button
+                android:id="@+id/button_outline"
+                android:layout_width="120dp"
+                android:layout_height="80dp"
+                android:textSize="20sp"
+                android:background="#00000000"
+                android:text="轮廓" />
+            <Button
+                android:id="@+id/button_reminiscence"
+                android:layout_width="120dp"
+                android:layout_height="80dp"
+                android:background="#00000000"
+                android:textSize="20sp"
+                android:text="怀旧" />
+            <Button
+                android:id="@+id/button_cartoon"
+                android:layout_width="120dp"
+                android:layout_height="80dp"
+                android:background="#00000000"
+                android:textSize="20sp"
+                android:text="连环画" />
+
+            <Button
+                android:id="@+id/button_casting"
+                android:layout_width="120dp"
+                android:layout_height="80dp"
+                android:textSize="20sp"
+                android:background="#00000000"
+                android:text="熔铸" />
+            <Button
+                android:id="@+id/button_frozen"
+                android:layout_width="120dp"
+                android:layout_height="80dp"
+                android:textSize="20sp"
+                android:background="#00000000"
+                android:text="冰冻" />
+            <Button
+                android:id="@+id/button_embossment"
+                android:layout_width="120dp"
+                android:layout_height="80dp"
+                android:textSize="20sp"
+                android:background="#00000000"
+                android:text="浮雕" />
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+</LinearLayout>

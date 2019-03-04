@@ -1,37 +1,37 @@
 -- Merging decision tree log ---
 manifest
-ADDED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml:2:1-6:12
-INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml:2:1-6:12
-INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml:2:1-6:12
-INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml:2:1-6:12
-INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml:2:1-6:12
-INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml:2:1-6:12
-INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml:2:1-6:12
+ADDED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml:2:1-6:12
+INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml:2:1-6:12
+INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml:2:1-6:12
+INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml:2:1-6:12
+INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml:2:1-6:12
+INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml:2:1-6:12
+INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml:2:1-6:12
 	package
-		ADDED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml:3:7-27
-		INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
-		INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
+		ADDED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml:3:7-27
+		INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
+		INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
 	android:versionName
-		ADDED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml:5:7-34
-		INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
-		INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
+		ADDED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml:5:7-34
+		INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
+		INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
 	xmlns:android
-		ADDED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml:2:11-69
+		ADDED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml:2:11-69
 	android:versionCode
-		ADDED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml:4:7-33
-		INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
-		INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
+		ADDED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml:4:7-33
+		INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
+		INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
 uses-sdk
-INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
-INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
-INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
-INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
+INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
+INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
+INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
+INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
-		ADDED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
-		INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
+		INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
+		ADDED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
+		INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
-		ADDED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
-		INJECTED from F:\AAAAA_demo\b\opencv\AndroidManifest.xml
+		INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
+		ADDED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
+		INJECTED from E:\GitHub\HJM\mpics\opencv\AndroidManifest.xml
