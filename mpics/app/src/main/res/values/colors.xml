@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+
+
+    <color name="color_515151">#515151</color>
+    <color name="color_3f51b5">#3f51b5</color>
+    <color name="eCheckBG">#108EE9</color>
+    <color name="white">#ffffff</color>
+    <color name="colorPrimaryOnTouch">#0A73CF</color>
+    <color name="login_icon_before">#8a8a8a</color>
+    <color name="light_blue">#87CEFF</color>
+    <color name="color_BBFFFF">#BBFFFF</color>
+    <color name="color_DBDBDB">#DBDBDB</color>
+    <color name="background">#F5F5F5</color>
+    <color name="white_background">#F5F5F5</color>
+    <color name="android_default_text_color">#8A000000</color>
+
+
+    <color name="work">#108EE9</color>
+    <color name="meeting">#87CEFF</color>
+    <color name="work_green">#009933</color>
+    <color name="work_purple">#9370DB</color>
+    <color name="work_yellow">#e8a010</color>
+    <color name="work_red">#e03636</color>
+    <color name="meeting_green">#66CC66</color>
+    <color name="meeting_purple">#EE82EE</color>
+    <color name="meeting_yellow">#FFCC33</color>
+    <color name="meeting_red">#ff6666</color>
+</resources>
