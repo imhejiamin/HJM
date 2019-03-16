@@ -9,11 +9,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -43,7 +45,10 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 public class ProcessActivity extends BaseActivity implements View.OnClickListener,View.OnTouchListener {
@@ -66,6 +71,9 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
     private PhotoClass pc;
     private Message ms;
     private ProgressDialog progressDialog;
+   private Uri imageUri = null;
+   private String mFilePath;
+   private FileInputStream is = null;
 
     private ImageView process_back;
     private ImageView process_save;
@@ -481,45 +489,72 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
             openFile(); //打开相册文件夹
     }
 
+
+
+
+    //打开相机
     private void openCamera(){
         //查看内存卡状态
         String Envior = Environment.getExternalStorageState();
         if (Envior.equals(Environment.MEDIA_MOUNTED)) {
 
             photo = null;
-            Intent ie1 = new Intent("android.media.action.IMAGE_CAPTURE");
-            startActivityForResult(ie1,1);
+            //启用相机程序
+//            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+//            startActivityForResult(intent,1);
+            File outputImage = new File(getExternalCacheDir(),"output_image.jpg");//放在关联缓存目录
+            try {
+                if(outputImage.exists()){
+                    outputImage.delete();
+                }
+                outputImage.createNewFile();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+            if(Build.VERSION.SDK_INT >= 24){
+                imageUri = FileProvider.getUriForFile(ProcessActivity.this,"com.example.b.fileprovider",outputImage);
+            }
+            else{
+                imageUri = Uri.fromFile(outputImage);
+            }
+//            Log.d("aaaaa","imageURI"+imageUri.toString());
+//            Log.d("bbb","outputImage"+outputImage.getAbsolutePath().toString());
+            //启用相机程序
+            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+            intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+            startActivityForResult(intent,1);
+
+
         }
         else
             Toast.makeText(ProcessActivity.this,"内存不可用",Toast.LENGTH_SHORT).show();
     }
 
+    //打开相册文件
     private void openFile(){
         photo =null;
         Intent ie2 = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(ie2,2);
     }
 
+
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
-        if(data!=null){
-            switch (requestCode){
-                case 1:{
-                    if(data.getData() != null || data.getExtras() != null){
-                        Uri uri = data.getData();
-                        if(uri != null){
-                            //uripath = uri.getPath();
-                            this.photo = BitmapFactory.decodeFile(uri.getPath());
+        switch (requestCode){
+            case 1:{ //打开相机
+                    if(resultCode == RESULT_OK){
+                        try {
+                            //将拍摄的照片显示出来
+                            Bitmap bitmap  = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                            process_photo.setImageBitmap(bitmap);//显示
+                            photo = bitmap;
+                        }catch (FileNotFoundException e){
+                            e.printStackTrace();
                         }
-                        if (photo == null) {
-                            Bundle bundle = data.getExtras();
-                            if (bundle !=null) {
-                                photo = (Bitmap) bundle.get("data");
-                            }
-                        }
+                        pc = new PhotoClass(photo);
+                        process_photo.setImageBitmap(photo);
                     }
-                    pc = new PhotoClass(photo);
-                    process_photo.setImageBitmap(photo);
+
                     break;
                 }
 
@@ -529,15 +564,13 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                     Uri selectedImage = data.getData();
                     String[] filePathColumn = { MediaStore.Images.Media.DATA };
                     // 获取选择照片的数据视图
-                    Cursor cursor = getContentResolver().query(selectedImage,
-                            filePathColumn, null, null, null);
+                    Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                     cursor.moveToFirst();
                     // 从数据视图中获取已选择图片的路径
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     String picturePath = cursor.getString(columnIndex);
                     cursor.close();
                     // 将图片显示到界面上
-//                    Toast.makeText(ProcessActivity.this,picturePath,Toast.LENGTH_LONG).show();
 
                     photo = getScaleBitmap(picturePath);
                     pc = new PhotoClass(photo);
@@ -547,7 +580,6 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                 default:
                     break;
             }
-        }
 
     }
 

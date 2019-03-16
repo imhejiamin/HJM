@@ -21,6 +21,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.ProcessActivity"></activity>
+        <provider
+            android:authorities="com.example.b.fileprovider"
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
     <!-- 访问相机和写入图片的权限-->
     <uses-permission android:name="android.permission.CAMERA"/>
@@ -30,5 +39,5 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 读sd卡权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <!--<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />-->
 </manifest>

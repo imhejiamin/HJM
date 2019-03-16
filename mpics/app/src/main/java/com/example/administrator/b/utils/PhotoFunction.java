@@ -22,7 +22,7 @@ public class PhotoFunction {
     //灰度化方法
     public Bitmap RGB2Gray(Bitmap photo) {
         Mat RGBMat = new Mat();
-        Bitmap grayBitmap = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.RGB_565);
+        Bitmap grayBitmap = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.RGB_565);//RGB_565就是R为5位，G为6位，B为5位共16位
         Utils.bitmapToMat(photo, RGBMat);//convert original bitmap to Mat, R G B.
         Imgproc.cvtColor(RGBMat, RGBMat, Imgproc.COLOR_RGB2GRAY);//rgbMat to gray grayMat
         Utils.matToBitmap(RGBMat, grayBitmap);
@@ -76,7 +76,7 @@ public class PhotoFunction {
     public Bitmap Lunkuo(Bitmap photo){
         Mat mat = new Mat();
         Mat Cmat = new Mat();
-        Mat Bmat = new Mat();
+        //Mat Bmat = new Mat();
         Bitmap cartton = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.ARGB_8888);
         Utils.bitmapToMat(photo, mat);
         Imgproc.Canny(mat,Cmat,50,100);
