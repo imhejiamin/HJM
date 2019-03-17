@@ -554,6 +554,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                         pc = new PhotoClass(photo);
                         process_photo.setImageBitmap(photo);
                     }
+                    else this.finish();
 
                     break;
                 }
@@ -561,20 +562,23 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                 case 2:{
                     //打开相册并选择照片，这个方式选择单张
                     // 获取返回的数据，这里是android自定义的Uri地址
-                    Uri selectedImage = data.getData();
-                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
-                    // 获取选择照片的数据视图
-                    Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                    cursor.moveToFirst();
-                    // 从数据视图中获取已选择图片的路径
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String picturePath = cursor.getString(columnIndex);
-                    cursor.close();
-                    // 将图片显示到界面上
+                    if(resultCode == RESULT_OK){
+                        Uri selectedImage = data.getData();
+                        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                        // 获取选择照片的数据视图
+                        Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                        cursor.moveToFirst();
+                        // 从数据视图中获取已选择图片的路径
+                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                        String picturePath = cursor.getString(columnIndex);
+                        cursor.close();
+                        // 将图片显示到界面上
 
-                    photo = getScaleBitmap(picturePath);
-                    pc = new PhotoClass(photo);
-                    process_photo.setImageBitmap(photo);
+                        photo = getScaleBitmap(picturePath);
+                        pc = new PhotoClass(photo);
+                        process_photo.setImageBitmap(photo);
+                    }else this.finish();
+
                     break;
                 }
                 default:

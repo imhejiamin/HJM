@@ -100,7 +100,7 @@
                 android:layout_height="80dp"
                 android:textSize="20sp"
                 android:background="@drawable/progress_btn_shape"
-                android:text="黑白" />
+                android:text="老电影" />
             <Button
                 android:id="@+id/button_outline"
                 android:layout_width="120dp"
@@ -129,14 +129,14 @@
                 android:layout_height="80dp"
                 android:textSize="20sp"
                 android:background="@drawable/progress_btn_shape"
-                android:text="熔铸" />
+                android:text="宝丽来" />
             <Button
                 android:id="@+id/button_frozen"
                 android:layout_width="120dp"
                 android:layout_height="80dp"
                 android:textSize="20sp"
                 android:background="@drawable/progress_btn_shape"
-                android:text="冰冻" />
+                android:text="高斯模糊" />
             <Button
                 android:id="@+id/button_embossment"
                 android:layout_width="120dp"
