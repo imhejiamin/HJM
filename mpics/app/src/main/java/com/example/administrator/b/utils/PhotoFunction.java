@@ -231,7 +231,14 @@ public class PhotoFunction {
             int dx = (int) bilityTraversal[0].floatValue() * 5; // 双边滤波参数之一
             double fc = bilityTraversal[0] * 12.5; // 双边滤波参数之一
             double p = 0.1f; // 透明度
-            Mat image = new Mat(), dst = new Mat(), matBilFilter = new Mat(), matGaussSrc = new Mat(), matGaussDest = new Mat(), matTmpDest = new Mat(), matSubDest = new Mat(), matTmpSrc = new Mat();
+            Mat image = new Mat();
+            Mat dst = new Mat();
+            Mat matBilFilter = new Mat();
+            Mat matGaussSrc = new Mat();
+            Mat matGaussDest = new Mat();
+            Mat matTmpDest = new Mat();
+            Mat matSubDest = new Mat();
+            Mat matTmpSrc = new Mat();
 
             // 双边滤波
             Utils.bitmapToMat(photo, image);
@@ -240,6 +247,7 @@ public class PhotoFunction {
 
             Core.subtract(matBilFilter, image, matSubDest);
             Core.add(matSubDest, new Scalar(128, 128, 128, 128), matGaussSrc);
+
             // 高斯模糊
             Imgproc.GaussianBlur(matGaussSrc, matGaussDest, new Size(2 * bilityTraversal[0] - 1, 2 * bilityTraversal[0] - 1), 0, 0);
             matGaussDest.convertTo(matTmpSrc, matGaussDest.type(), 2, -255);
