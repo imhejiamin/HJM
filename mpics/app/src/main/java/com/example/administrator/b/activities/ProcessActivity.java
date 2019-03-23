@@ -25,6 +25,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.example.administrator.b.BaseActivity;
@@ -64,21 +65,25 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
     private static final String BingDongString = "Bingdong"; //冰冻
     private static final String RongzhuString = "Rongzhu"; //熔铸
     private static final String FudiaoString = "Fudiao";//浮雕
+    private static final String BeautyString = "Beauty"; //美颜
 
     private Bitmap photo;
     private Bitmap src;
+    private Bitmap bp;
     private PhotoFunction func;
     private PhotoClass pc;
     private Message ms;
     private ProgressDialog progressDialog;
-   private Uri imageUri = null;
-   private String mFilePath;
-   private FileInputStream is = null;
+    private Uri imageUri = null;
+    private String mFilePath;
+    private FileInputStream is = null;
+    private float f = 3.0f;
 
     private ImageView process_back;
     private ImageView process_save;
     private ImageView process_photo;
     private ImageButton process_contrast;
+    private SeekBar seekBar;
 
     private Button button_initial;
     private Button button_Sketch;
@@ -91,6 +96,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
     private Button button_Bingdong;
     private Button button_Rongzhu;
     private Button button_face;
+    private Button button_beauty;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -114,7 +120,6 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         //取消状态栏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_process);
-
         init();
         showInitialPhoto();
     }
@@ -127,6 +132,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         process_photo = (ImageView)findViewById(R.id.process_photo);
         process_contrast = (ImageButton)findViewById(R.id.process_contrast);
 
+
         button_initial = (Button)findViewById(R.id.button_initial);
         button_Bingdong = (Button)findViewById(R.id.button_frozen);
         button_Fudiao = (Button)findViewById(R.id.button_embossment);
@@ -138,6 +144,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         button_Theshold = (Button)findViewById(R.id.button_binaryzation);
         button_Lianhuanhua = (Button)findViewById(R.id.button_cartoon);
         button_face= (Button)findViewById(R.id.button_face_recognition);
+        button_beauty = (Button)findViewById(R.id.button_beauty);
 
         process_back.setOnClickListener(this);
         process_save.setOnClickListener(this);
@@ -152,11 +159,26 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         button_Lunkuo.setOnClickListener(this);
         button_Lianhuanhua.setOnClickListener(this);
         button_Sketch.setOnClickListener(this);
+        button_beauty.setOnClickListener(this);
 
         process_contrast.setOnTouchListener(this);
 
-    }
+        seekBar = (SeekBar)findViewById(R.id.seekBar);
+        seekBar.setVisibility(View.INVISIBLE);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) { }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //progress范围为0-500
+                f = seekBar.getProgress() / 100 + 1.0f;
+                BeautyThread();
 
+            }
+        });
+    }
 
     @Override
     public void onClick(View v) {
@@ -177,12 +199,15 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                 dia.show();
                 break;
             case R.id.button_initial:
+                seekBar.setVisibility(View.INVISIBLE);
                 process_photo.setImageBitmap(photo);
                 break;
             case R.id.button_face_recognition:
+                seekBar.setVisibility(View.INVISIBLE);
                 process_photo.setImageBitmap(FaceDetect(photo));
                 break;
             case R.id.button_sketch:
+                seekBar.setVisibility(View.INVISIBLE);
                 if(pc.get_Sumiao_photo()==null){
                     progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
                     SumiaoThread();
@@ -191,6 +216,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                     process_photo.setImageBitmap(pc.get_Sumiao_photo());
                 break;
             case R.id.button_binaryzation:
+                seekBar.setVisibility(View.INVISIBLE);
                 if(pc.get_theshold_photo()==null){
                     progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
                     ThesThread();
@@ -199,6 +225,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                     process_photo.setImageBitmap(pc.get_theshold_photo());
                 break;
             case R.id.button_outline:
+                seekBar.setVisibility(View.INVISIBLE);
                 if(pc.get_Lunkuo_photo()==null){
                     progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
                     LunKuoThread();
@@ -207,6 +234,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                     process_photo.setImageBitmap(pc.get_Lunkuo_photo());
                 break;
             case R.id.button_casting:
+                seekBar.setVisibility(View.INVISIBLE);
                 if(pc.get_Rongzhu_photo()==null){
                     progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
                     RongzhuThread();
@@ -215,6 +243,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                     process_photo.setImageBitmap(pc.get_Rongzhu_photo());
                 break;
             case R.id.button_gray:
+                seekBar.setVisibility(View.INVISIBLE);
                 if(pc.get_Gray_photo()==null){
                     progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
                     GrayThread();
@@ -223,6 +252,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                     process_photo.setImageBitmap(pc.get_Gray_photo());
                 break;
             case R.id.button_embossment:
+                seekBar.setVisibility(View.INVISIBLE);
                 if(pc.get_FuDiao_photo()==null){
                     progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
                     FudiaoThread();
@@ -231,6 +261,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                     process_photo.setImageBitmap(pc.get_FuDiao_photo());
                 break;
             case R.id.button_frozen:
+                seekBar.setVisibility(View.INVISIBLE);
                 if(pc.get_BingDong_photo()==null){
                     progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
                     BingDongThread();
@@ -239,6 +270,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                     process_photo.setImageBitmap(pc.get_BingDong_photo());
                 break;
             case R.id.button_cartoon:
+                seekBar.setVisibility(View.INVISIBLE);
                 if(pc.get_LianHuanHua_photo()==null){
                     progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
                     LianhuanhuaThread();
@@ -247,12 +279,22 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                     process_photo.setImageBitmap(pc.get_LianHuanHua_photo());
                 break;
             case R.id.button_reminiscence:
+                seekBar.setVisibility(View.INVISIBLE);
                 if(pc.get_Huaijiu_photo()==null){
                     progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
                     HuaijiuThread();
                 }
                 else
                     process_photo.setImageBitmap(pc.get_Huaijiu_photo());
+                break;
+            case R.id.button_beauty:
+                seekBar.setVisibility(View.VISIBLE);
+                if(pc.get_Beauty_photo()==null){
+                    process_photo.setImageBitmap(photo);
+                }
+                else {
+                    process_photo.setImageBitmap(pc.get_Beauty_photo());
+                }
                 break;
             default:break;
         }
@@ -264,7 +306,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
             case R.id.process_contrast:
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_UP://松开事件发生后执行代码的区域
-                        process_photo.setImageBitmap(src);
+                        process_photo.setImageBitmap(src); //src是保存按住事件执行前的图片状况
                         break;
                     case MotionEvent.ACTION_DOWN://按住事件发生后执行代码的区域
                         src = convertViewToBitmap();
@@ -318,6 +360,12 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                 progressDialog.dismiss();
                 process_photo.setImageBitmap(pc.get_Huaijiu_photo());
             }
+            else if(msg.obj==BeautyString) {
+                //progressDialog.dismiss();
+
+                process_photo.setImageBitmap(pc.get_Beauty_photo());
+            }
+
         }
     };
     private void SumiaoThread(){
@@ -415,6 +463,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         }).start();
     }
 
+
     private void FudiaoThread(){
         new Thread(new Runnable() {
             @Override
@@ -426,6 +475,18 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
             }
         }).start();
     }
+    private void BeautyThread(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                pc.put_Beauty_photo(func.Beauty(bp,f));
+                ms = new Message();
+                ms.obj =BeautyString;
+                handler.sendMessage(ms);// 执行耗时的方法之后发送消给handler
+            }
+        }).start();
+    }
+
 
     //保存图片
     private void saveImage(){
@@ -517,8 +578,6 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
             else{
                 imageUri = Uri.fromFile(outputImage);
             }
-//            Log.d("aaaaa","imageURI"+imageUri.toString());
-//            Log.d("bbb","outputImage"+outputImage.getAbsolutePath().toString());
             //启用相机程序
             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
             intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
@@ -546,8 +605,9 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                         try {
                             //将拍摄的照片显示出来
                             Bitmap bitmap  = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                            bp = bitmap.copy(Bitmap.Config.ARGB_8888,true);
                             process_photo.setImageBitmap(bitmap);//显示
-                            photo = bitmap;
+                            photo = bitmap.copy(Bitmap.Config.ARGB_8888,true);
                         }catch (FileNotFoundException e){
                             e.printStackTrace();
                         }
@@ -573,7 +633,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                         String picturePath = cursor.getString(columnIndex);
                         cursor.close();
                         // 将图片显示到界面上
-
+                        bp = getScaleBitmap(picturePath);
                         photo = getScaleBitmap(picturePath);
                         pc = new PhotoClass(photo);
                         process_photo.setImageBitmap(photo);

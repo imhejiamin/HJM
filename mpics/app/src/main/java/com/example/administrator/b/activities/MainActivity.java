@@ -31,7 +31,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         setContentView(R.layout.activity_main);
 
         View v= findViewById(R.id.main_layout);//设置背景透明度
-        v.getBackground().setAlpha(100);//0--255为透明度值
+        v.getBackground().setAlpha(125);//0--255为透明度值
 
         get_SDcard_permission(); //向用户申请相机和相册权限
 

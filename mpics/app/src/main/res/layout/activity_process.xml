@@ -53,6 +53,22 @@
 
 
     </RelativeLayout>
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:max="500"
+        android:progress="0"
+        android:secondaryProgress="1"
+        tools:ignore="MissingConstraints"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#C2C2C2"/>
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
@@ -68,56 +84,56 @@
 
             <Button
                 android:id="@+id/button_initial"
-                android:layout_width="120dp"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:background="@drawable/progress_btn_shape"
                 android:textSize="20sp"
                 android:text="原图" />
             <Button
                 android:id="@+id/button_gray"
-                android:layout_width="120dp"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:background="@drawable/progress_btn_shape"
                 android:textSize="20sp"
                 android:text="灰色" />
             <Button
                 android:id="@+id/button_face_recognition"
-                android:layout_width="120dp"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:background="@drawable/progress_btn_shape"
                 android:textSize="20sp"
-                android:text="人脸识别" />
+                android:text="人脸" />
             <Button
                 android:id="@+id/button_sketch"
-                android:layout_width="120dp"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:background="@drawable/progress_btn_shape"
                 android:textSize="20sp"
                 android:text="素描" />
             <Button
                 android:id="@+id/button_binaryzation"
-                android:layout_width="120dp"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:textSize="20sp"
                 android:background="@drawable/progress_btn_shape"
-                android:text="老电影" />
+                android:text="木刻" />
             <Button
                 android:id="@+id/button_outline"
-                android:layout_width="120dp"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:textSize="20sp"
                 android:background="@drawable/progress_btn_shape"
                 android:text="轮廓" />
             <Button
                 android:id="@+id/button_reminiscence"
-                android:layout_width="120dp"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:background="@drawable/progress_btn_shape"
                 android:textSize="20sp"
                 android:text="怀旧" />
             <Button
                 android:id="@+id/button_cartoon"
-                android:layout_width="120dp"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:background="@drawable/progress_btn_shape"
                 android:textSize="20sp"
@@ -125,25 +141,32 @@
 
             <Button
                 android:id="@+id/button_casting"
-                android:layout_width="120dp"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:textSize="20sp"
                 android:background="@drawable/progress_btn_shape"
                 android:text="宝丽来" />
             <Button
                 android:id="@+id/button_frozen"
-                android:layout_width="120dp"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:textSize="20sp"
                 android:background="@drawable/progress_btn_shape"
-                android:text="高斯模糊" />
+                android:text="模糊" />
             <Button
                 android:id="@+id/button_embossment"
-                android:layout_width="120dp"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:textSize="20sp"
                 android:background="@drawable/progress_btn_shape"
                 android:text="浮雕" />
+            <Button
+                android:id="@+id/button_beauty"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:textSize="20sp"
+                android:background="@drawable/progress_btn_shape"
+                android:text="美颜" />
         </LinearLayout>
 
     </HorizontalScrollView>

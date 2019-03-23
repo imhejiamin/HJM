@@ -7,6 +7,7 @@ import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -74,7 +75,7 @@ public class PhotoFunction {
         return sumiaoMap;
     }
 
-    //黑白（老电影）
+    //黑白,改成木刻
     public Bitmap theshold(Bitmap photo){
         Mat mat = new Mat();
         Bitmap thes = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.ARGB_8888);
@@ -222,4 +223,36 @@ public class PhotoFunction {
         fudiao.setPixels(newPixels,0,photo.getWidth(),0,0,photo.getWidth(),photo.getHeight());
         return fudiao;
     }
+
+    public Bitmap Beauty(Bitmap photo , Float... bilityTraversal) {
+        Bitmap resultBitmap = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.ARGB_8888);
+        if (bilityTraversal[0] > 0) {
+            // 磨皮美颜算法
+            int dx = (int) bilityTraversal[0].floatValue() * 5; // 双边滤波参数之一
+            double fc = bilityTraversal[0] * 12.5; // 双边滤波参数之一
+            double p = 0.1f; // 透明度
+            Mat image = new Mat(), dst = new Mat(), matBilFilter = new Mat(), matGaussSrc = new Mat(), matGaussDest = new Mat(), matTmpDest = new Mat(), matSubDest = new Mat(), matTmpSrc = new Mat();
+
+            // 双边滤波
+            Utils.bitmapToMat(photo, image);
+            Imgproc.cvtColor(image, image, Imgproc.COLOR_BGRA2BGR);
+            Imgproc.bilateralFilter(image, matBilFilter, dx, fc, fc);
+
+            Core.subtract(matBilFilter, image, matSubDest);
+            Core.add(matSubDest, new Scalar(128, 128, 128, 128), matGaussSrc);
+            // 高斯模糊
+            Imgproc.GaussianBlur(matGaussSrc, matGaussDest, new Size(2 * bilityTraversal[0] - 1, 2 * bilityTraversal[0] - 1), 0, 0);
+            matGaussDest.convertTo(matTmpSrc, matGaussDest.type(), 2, -255);
+            Core.add(image, matTmpSrc, matTmpDest);
+            Core.addWeighted(image, p, matTmpDest, 1 - p, 0.0, dst);
+
+            Core.add(dst, new Scalar(10, 10, 10), dst);
+            Utils.matToBitmap(dst, resultBitmap);
+        }
+        return resultBitmap;
+    }
+
+
+
+
 }
