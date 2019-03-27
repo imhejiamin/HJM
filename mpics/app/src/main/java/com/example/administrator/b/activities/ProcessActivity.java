@@ -65,7 +65,8 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
     private static final String BingDongString = "Bingdong"; //冰冻
     private static final String RongzhuString = "Rongzhu"; //熔铸
     private static final String FudiaoString = "Fudiao";//浮雕
-    private static final String BeautyString = "Beauty"; //美颜
+    private static final String BeautyString = "Beauty"; //美颜1 基于双边滤波和高斯模糊
+    private static final String Beauty2String = "Beauty2"; //美颜2 基于快速epe滤波，mask,高斯权重,canny
 
     private Bitmap photo;
     private Bitmap src;
@@ -97,6 +98,8 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
     private Button button_Rongzhu;
     private Button button_face;
     private Button button_beauty;
+    private Button button_beauty2;
+
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -145,6 +148,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         button_Lianhuanhua = (Button)findViewById(R.id.button_cartoon);
         button_face= (Button)findViewById(R.id.button_face_recognition);
         button_beauty = (Button)findViewById(R.id.button_beauty);
+        button_beauty2 = (Button)findViewById(R.id.button_beauty2);
 
         process_back.setOnClickListener(this);
         process_save.setOnClickListener(this);
@@ -160,6 +164,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         button_Lianhuanhua.setOnClickListener(this);
         button_Sketch.setOnClickListener(this);
         button_beauty.setOnClickListener(this);
+        button_beauty2.setOnClickListener(this);
 
         process_contrast.setOnTouchListener(this);
 
@@ -172,7 +177,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
             public void onStartTrackingTouch(SeekBar seekBar) { }
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                //progress范围为0-500
+                //progress范围为0-500，参数作为双边滤波参数，调整美颜程度
                 f = seekBar.getProgress() / 100 + 1.0f;
                 BeautyThread();
 
@@ -296,6 +301,15 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                     process_photo.setImageBitmap(pc.get_Beauty_photo());
                 }
                 break;
+            case R.id.button_beauty2:
+                seekBar.setVisibility(View.INVISIBLE);
+                if(pc.get_Beauty2_photo()==null){
+                    progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
+                    Beauty2Thread();
+                }
+                else
+                    process_photo.setImageBitmap(pc.get_Beauty2_photo());
+                break;
             default:break;
         }
     }
@@ -362,8 +376,11 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
             }
             else if(msg.obj==BeautyString) {
                 //progressDialog.dismiss();
-
                 process_photo.setImageBitmap(pc.get_Beauty_photo());
+            }
+            else if(msg.obj==Beauty2String) {
+                progressDialog.dismiss();
+                process_photo.setImageBitmap(pc.get_Beauty2_photo());
             }
 
         }
@@ -479,9 +496,20 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         new Thread(new Runnable() {
             @Override
             public void run() {
-                pc.put_Beauty_photo(func.Beauty(bp,f));
+                pc.put_Beauty_photo(func.Beauty(bp,f));//这个bp其实跟photo是一样的，bitmap赋值bug要注意
                 ms = new Message();
                 ms.obj =BeautyString;
+                handler.sendMessage(ms);// 执行耗时的方法之后发送消给handler
+            }
+        }).start();
+    }
+    private void Beauty2Thread(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                pc.put_Beauty2_photo(func.Beauty2(photo));
+                ms = new Message();
+                ms.obj =Beauty2String;
                 handler.sendMessage(ms);// 执行耗时的方法之后发送消给handler
             }
         }).start();
@@ -722,6 +750,14 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
             Log.d("initial_error", "OpenCV library found inside package. Using it!");
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        super.onDestroy();
     }
 
 

@@ -13,6 +13,7 @@ public class PhotoClass {
     private Bitmap FuDiao_photo;
     private Bitmap LianHuanHua_photo;
     private Bitmap Beauty_photo;
+    private Bitmap Beauty2_photo;
 
     public PhotoClass(Bitmap photo){
         Gray_photo = null;
@@ -25,6 +26,7 @@ public class PhotoClass {
         FuDiao_photo = null;
         LianHuanHua_photo = null;
         Beauty_photo = null;
+        Beauty2_photo = null;
     }
 
     public void put_Gray_photo(Bitmap photo){
@@ -65,6 +67,10 @@ public class PhotoClass {
 
     public void put_Beauty_photo(Bitmap photo){ this.Beauty_photo = photo;}
 
+    public void put_Beauty2_photo(Bitmap photo){ this.Beauty2_photo = photo;}
+
+
+
 
     public Bitmap get_Lunkuo_photo(){
         return this.Lunkuo_photo;
@@ -103,4 +109,6 @@ public class PhotoClass {
     }
 
     public Bitmap get_Beauty_photo(){ return this.Beauty_photo;}
+
+    public Bitmap get_Beauty2_photo(){ return this.Beauty2_photo;}
 }
