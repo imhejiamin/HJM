@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -40,7 +43,6 @@ import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
@@ -58,15 +60,19 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
 
     private static final String SumiaoString = "Sumiao";//素描
     private static final String GrayString = "Gray"; //灰度化
-    private static final String thresholdString = "threshold";//二值化
+    private static final String thresholdString = "threshold";//二值化:木刻
     private static final String LunkuoString = "Lunkuo";//轮廓
     private static final String HuaijiuString = "Huaijiu"; //怀旧
     private static final String LianhuanhuaFString = "LianhuanhuaF"; //连环画
-    private static final String BingDongString = "Bingdong"; //冰冻
-    private static final String RongzhuString = "Rongzhu"; //熔铸
+    private static final String GaussianString = "Gaussian"; //高斯模糊
+    private static final String PolaroidString = "Polaroid"; //宝丽来
     private static final String FudiaoString = "Fudiao";//浮雕
     private static final String BeautyString = "Beauty"; //美颜1 基于双边滤波和高斯模糊
-    private static final String Beauty2String = "Beauty2"; //美颜2 基于快速epe滤波，mask,高斯权重,canny
+    private static final String Beauty2String = "Beauty2"; //美颜2 基于双边滤波，mask,高斯权重,canny
+    private static final String WindString = "Wind"; //横风滤镜
+    private static final String SummerString = "Summer"; //夏日滤镜
+    private static final String WinterString = "Winter"; //冬日滤镜
+    private static final String CloudyString = "Cloudy"; //阴天滤镜
 
     private Bitmap photo;
     private Bitmap src;
@@ -94,11 +100,15 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
     private Button button_Theshold;
     private Button button_Lianhuanhua;
     private Button button_Huaijiu;
-    private Button button_Bingdong;
-    private Button button_Rongzhu;
+    private Button button_Gaussian;
+    private Button button_Polaroid;
     private Button button_face;
     private Button button_beauty;
     private Button button_beauty2;
+    private Button button_wind;
+    private Button button_summer;
+    private Button button_winter;
+    private Button button_cloudy;
 
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -106,8 +116,8 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         public void onManagerConnected(int status) {
             switch (status){
                 case BaseLoaderCallback.SUCCESS:{
-                    initializeOpenCVDependencies();
-                    //Toast.makeText(ProcessActivity.this,"成功打开opencv", Toast.LENGTH_LONG).show();
+                    initializeOpenCVDependencies(); //加载lbp分类器
+                    Log.d("load", "load success !");
                     break;
                 }
                 default: {
@@ -137,34 +147,42 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
 
 
         button_initial = (Button)findViewById(R.id.button_initial);
-        button_Bingdong = (Button)findViewById(R.id.button_frozen);
+        button_Gaussian = (Button)findViewById(R.id.button_gaussian);
         button_Fudiao = (Button)findViewById(R.id.button_embossment);
         button_Gray = (Button)findViewById(R.id.button_gray);
         button_Huaijiu= (Button)findViewById(R.id.button_reminiscence);
         button_Sketch = (Button)findViewById(R.id.button_sketch);
-        button_Rongzhu= (Button)findViewById(R.id.button_casting);
+        button_Polaroid= (Button)findViewById(R.id.button_polaroid);
         button_Lunkuo =  (Button)findViewById(R.id.button_outline);
         button_Theshold = (Button)findViewById(R.id.button_binaryzation);
         button_Lianhuanhua = (Button)findViewById(R.id.button_cartoon);
         button_face= (Button)findViewById(R.id.button_face_recognition);
         button_beauty = (Button)findViewById(R.id.button_beauty);
         button_beauty2 = (Button)findViewById(R.id.button_beauty2);
+        button_wind = (Button)findViewById(R.id.button_wind);
+        button_summer = (Button)findViewById(R.id.button_summer);
+        button_winter = (Button)findViewById(R.id.button_winter);
+        button_cloudy = (Button)findViewById(R.id.button_cloudy);
 
         process_back.setOnClickListener(this);
         process_save.setOnClickListener(this);
         button_initial.setOnClickListener(this);
         button_face.setOnClickListener(this);
-        button_Bingdong.setOnClickListener(this);
+        button_Gaussian.setOnClickListener(this);
         button_Fudiao.setOnClickListener(this);
         button_Gray.setOnClickListener(this);
         button_Huaijiu.setOnClickListener(this);
         button_Theshold.setOnClickListener(this);
-        button_Rongzhu.setOnClickListener(this);
+        button_Polaroid.setOnClickListener(this);
         button_Lunkuo.setOnClickListener(this);
         button_Lianhuanhua.setOnClickListener(this);
         button_Sketch.setOnClickListener(this);
         button_beauty.setOnClickListener(this);
         button_beauty2.setOnClickListener(this);
+        button_wind.setOnClickListener(this);
+        button_summer.setOnClickListener(this);
+        button_winter.setOnClickListener(this);
+        button_cloudy.setOnClickListener(this);
 
         process_contrast.setOnTouchListener(this);
 
@@ -238,14 +256,14 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                 else
                     process_photo.setImageBitmap(pc.get_Lunkuo_photo());
                 break;
-            case R.id.button_casting:
+            case R.id.button_polaroid:
                 seekBar.setVisibility(View.INVISIBLE);
-                if(pc.get_Rongzhu_photo()==null){
+                if(pc.get_Polaroid_photo()==null){
                     progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
-                    RongzhuThread();
+                    PolaroidThread();
                 }
                 else
-                    process_photo.setImageBitmap(pc.get_Rongzhu_photo());
+                    process_photo.setImageBitmap(pc.get_Polaroid_photo());
                 break;
             case R.id.button_gray:
                 seekBar.setVisibility(View.INVISIBLE);
@@ -265,14 +283,14 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                 else
                     process_photo.setImageBitmap(pc.get_FuDiao_photo());
                 break;
-            case R.id.button_frozen:
+            case R.id.button_gaussian:
                 seekBar.setVisibility(View.INVISIBLE);
-                if(pc.get_BingDong_photo()==null){
+                if(pc.get_Gaussian_photo()==null){
                     progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
-                    BingDongThread();
+                    GaussianThread();
                 }
                 else
-                    process_photo.setImageBitmap(pc.get_BingDong_photo());
+                    process_photo.setImageBitmap(pc.get_Gaussian_photo());
                 break;
             case R.id.button_cartoon:
                 seekBar.setVisibility(View.INVISIBLE);
@@ -310,6 +328,42 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                 else
                     process_photo.setImageBitmap(pc.get_Beauty2_photo());
                 break;
+            case R.id.button_wind:
+                seekBar.setVisibility(View.INVISIBLE);
+                if(pc.get_Wind_photo()==null){
+                    progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
+                    WindThread();
+                }
+                else
+                    process_photo.setImageBitmap(pc.get_Wind_photo());
+                break;
+            case R.id.button_summer:
+                seekBar.setVisibility(View.INVISIBLE);
+                if(pc.get_Summer_photo()==null){
+                    progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
+                    SummerThread();
+                }
+                else
+                    process_photo.setImageBitmap(pc.get_Summer_photo());
+                break;
+            case R.id.button_winter:
+                seekBar.setVisibility(View.INVISIBLE);
+                if(pc.get_Winter_photo()==null){
+                    progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
+                    WinterThread();
+                }
+                else
+                    process_photo.setImageBitmap(pc.get_Winter_photo());
+                break;
+            case R.id.button_cloudy:
+                seekBar.setVisibility(View.INVISIBLE);
+                if(pc.get_Cloudy_photo()==null){
+                    progressDialog = ProgressDialog.show(ProcessActivity.this, "", "加载滤镜中，请稍后……");
+                    CloudyThread();
+                }
+                else
+                    process_photo.setImageBitmap(pc.get_Cloudy_photo());
+                break;
             default:break;
         }
     }
@@ -342,9 +396,9 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                 progressDialog.dismiss();
                 process_photo.setImageBitmap(pc.get_Sumiao_photo());
             }
-            else if(msg.obj==BingDongString) {
+            else if(msg.obj==GaussianString) {
                 progressDialog.dismiss();
-                process_photo.setImageBitmap(pc.get_BingDong_photo());
+                process_photo.setImageBitmap(pc.get_Gaussian_photo());
             }
             else if(msg.obj==thresholdString) {
                 progressDialog.dismiss();
@@ -358,9 +412,9 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
                 progressDialog.dismiss();
                 process_photo.setImageBitmap(pc.get_Lunkuo_photo());
             }
-            else if(msg.obj==RongzhuString) {
+            else if(msg.obj==PolaroidString) {
                 progressDialog.dismiss();
-                process_photo.setImageBitmap(pc.get_Rongzhu_photo());
+                process_photo.setImageBitmap(pc.get_Polaroid_photo());
             }
             else if(msg.obj==GrayString) {
                 progressDialog.dismiss();
@@ -381,6 +435,22 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
             else if(msg.obj==Beauty2String) {
                 progressDialog.dismiss();
                 process_photo.setImageBitmap(pc.get_Beauty2_photo());
+            }
+            else if(msg.obj==WindString) {
+                progressDialog.dismiss();
+                process_photo.setImageBitmap(pc.get_Wind_photo());
+            }
+            else if(msg.obj==SummerString) {
+                progressDialog.dismiss();
+                process_photo.setImageBitmap(pc.get_Summer_photo());
+            }
+            else if(msg.obj==WinterString) {
+                progressDialog.dismiss();
+                process_photo.setImageBitmap(pc.get_Winter_photo());
+            }
+            else if(msg.obj==CloudyString) {
+                progressDialog.dismiss();
+                process_photo.setImageBitmap(pc.get_Cloudy_photo());
             }
 
         }
@@ -456,25 +526,25 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         }).start();
     }
 
-    private void RongzhuThread(){
+    private void PolaroidThread(){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                pc.put_Rongzhu_photo(func.RongZhu(photo));
+                pc.put_Polaroid_photo(func.Polaroid(photo));
                 ms = new Message();
-                ms.obj =RongzhuString;
+                ms.obj =PolaroidString;
                 handler.sendMessage(ms);// 执行耗时的方法之后发送消给handler
             }
         }).start();
     }
 
-    private void BingDongThread(){
+    private void GaussianThread(){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                pc.put_BingDong_photo(func.BingDong(photo));
+                pc.put_Gaussian_photo(func.Gaussian(photo));
                 ms = new Message();
-                ms.obj =BingDongString;
+                ms.obj = GaussianString;
                 handler.sendMessage(ms);// 执行耗时的方法之后发送消给handler
             }
         }).start();
@@ -514,7 +584,50 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
             }
         }).start();
     }
-
+    private void WindThread(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                pc.put_Wind_photo(func.Wind(photo));
+                ms = new Message();
+                ms.obj =WindString;
+                handler.sendMessage(ms);// 执行耗时的方法之后发送消给handler
+            }
+        }).start();
+    }
+    private void SummerThread(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                pc.put_Summer_photo(func.Summer(photo));
+                ms = new Message();
+                ms.obj =SummerString;
+                handler.sendMessage(ms);// 执行耗时的方法之后发送消给handler
+            }
+        }).start();
+    }
+    private void WinterThread(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                pc.put_Winter_photo(func.Winter(photo));
+                ms = new Message();
+                ms.obj =WinterString;
+                handler.sendMessage(ms);// 执行耗时的方法之后发送消给handler
+            }
+        }).start();
+    }
+    private void CloudyThread(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                pc.put_Cloudy_photo(func.Cloudy(photo));
+                ms = new Message();
+                ms.obj =CloudyString;
+                handler.sendMessage(ms);// 执行耗时的方法之后发送消给handler
+            }
+        }).start();
+    }
 
     //保存图片
     private void saveImage(){
@@ -543,7 +656,9 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         // 最后通知图库更新
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                 Uri.fromFile(new File(file.getPath()))));
-        Toast.makeText(ProcessActivity.this,"保存成功",Toast.LENGTH_LONG).show();
+        Toast toast = Toast.makeText(ProcessActivity.this,"保存成功",Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 
     //人脸检测函数
@@ -555,20 +670,56 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         Utils.bitmapToMat(photo,srcmap);
         Imgproc.cvtColor(srcmap,graymap,Imgproc.COLOR_RGBA2RGB);
         if (cascadeClassifier != null ){
-            cascadeClassifier.detectMultiScale(graymap,faces,1.1, 2, 2,
-                    new Size(FaceSize,FaceSize),new Size());
+            cascadeClassifier.detectMultiScale(graymap,faces,1.1, 2, 2, new Size(FaceSize,FaceSize),new Size());
         }
-        else {
+        Mat beauty = getPaster();
+        Rect[] facesArray = faces.toArray();
+        for (int i = 0; i <facesArray.length; i++) {
+            // 画矩形标注检测到的人脸
+            // Imgproc.rectangle(srcmap, facesArray[i].tl(), facesArray[i].br(), new Scalar(0, 255, 0, 255), 3);
+            // 贴贴纸
+            addBeauty((int)facesArray[i].tl().y, (int)(facesArray[i].tl().x+facesArray[i].br().x-beauty.cols())/2,beauty,srcmap);
         }
 
-        Rect[] facesArray = faces.toArray();
-        for (int i = 0; i <facesArray.length; i++)
-            Imgproc.rectangle(srcmap, facesArray[i].tl(), facesArray[i].br(), new Scalar(0, 255, 0, 255), 3);
 
         Bitmap result = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.RGB_565);;
         Utils.matToBitmap(srcmap,result);
         return result;
     }
+
+
+    //获取贴纸
+    private Mat getPaster() {
+        Drawable drawable1 = getResources().getDrawable(R.drawable.cat, null);
+        Bitmap bitmap1 = ((BitmapDrawable) drawable1).getBitmap();
+        bitmap1 = Bitmap.createScaledBitmap(bitmap1, 320, 320, true);
+        Mat MatPaster = new Mat();
+        Utils.bitmapToMat(bitmap1, MatPaster);
+        return MatPaster;
+    }
+
+    /**
+     * 添加宠萌效果
+     * @param offsetX x坐标偏移量
+     * @param offsetY y坐标偏移量
+     */
+    private void addBeauty(int offsetX, int offsetY,Mat beauty,Mat dst){
+        offsetX -= 200;//高度校正
+        if(offsetX < 0){
+            offsetX = 0;
+        }
+        for (int x=0; x<beauty.rows(); x++){
+            for (int y=0; y<beauty.cols(); y++){
+                double[] array = beauty.get(x, y);
+                if(array[0] != 0) {//过滤全黑像素
+                    dst.put(x+offsetX, y+offsetY, array);
+                }
+            }
+        }
+    }
+
+
+
 
     private void showInitialPhoto(){
         String permission = getIntent().getStringExtra("permission");
@@ -586,11 +737,8 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
         //查看内存卡状态
         String Envior = Environment.getExternalStorageState();
         if (Envior.equals(Environment.MEDIA_MOUNTED)) {
-
-            photo = null;
             //启用相机程序
-//            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-//            startActivityForResult(intent,1);
+            photo = null;
             File outputImage = new File(getExternalCacheDir(),"output_image.jpg");//放在关联缓存目录
             try {
                 if(outputImage.exists()){
@@ -676,22 +824,16 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
     }
 
 
-    private Bitmap getScaleBitmap(String wallpaperPath) {
-        Bitmap bm = BitmapFactory.decodeFile(wallpaperPath);
+    private Bitmap getScaleBitmap(String path) {
+        Bitmap bm = BitmapFactory.decodeFile(path);
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         int screenWidth=dm.widthPixels;
-        /*
-         * 图片的宽度 （用于判断当前图判是否过大，避免OOM使得imageview无法显示）
-         * 适用于 720P，其他分辨率需要重新修改
-         */
         int mFixedWidth = 2870;
-        //图片的高度 （用于客户预置特别大图，重新处理bitmap）
         int mFixedHeight = 1920;
         if(bm.getWidth()<=screenWidth){
             return bm;
         }else{
-            //Bitmap bmp=Bitmap.createScaledBitmap(bm, screenWidth, bm.getHeight()*screenWidth/bm.getWidth(), true);
             if (bm.getWidth()<= mFixedWidth) {
                 return bm;
             }
@@ -729,7 +871,7 @@ public class ProcessActivity extends BaseActivity implements View.OnClickListene
             os.close();
 
 
-            // Load the get
+            // Load the classifier
             cascadeClassifier = new CascadeClassifier(mCascadeFile.getAbsolutePath());
 
         } catch (Exception e) {

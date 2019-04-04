@@ -13,8 +13,9 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 public class PhotoFunction {
-
-    private float sigma = 30.0f;
+/*
+* 滤镜操作函数
+* */
     public PhotoFunction(){}
 
     //减淡函数
@@ -23,11 +24,10 @@ public class PhotoFunction {
     }
 
 
-
     //灰度化方法，直接使用 opencv 的 Imgproc.COLOR_RGB2GRAY 这个灰度处理方法
     public Bitmap RGB2Gray(Bitmap photo) {
         Mat RGBMat = new Mat();
-        Bitmap grayBitmap = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.RGB_565);//RGB_565就是R为5位，G为6位，B为5位共16位
+        Bitmap grayBitmap = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.RGB_565);  //RGB_565就是R为5位，G为6位，B为5位共16位
         Utils.bitmapToMat(photo, RGBMat);//convert original bitmap to Mat, R G B.
         Imgproc.cvtColor(RGBMat, RGBMat, Imgproc.COLOR_RGB2GRAY);//rgbMat to gray grayMat
         Utils.matToBitmap(RGBMat, grayBitmap);
@@ -85,7 +85,7 @@ public class PhotoFunction {
         Imgproc.cvtColor(mat,mat,Imgproc.COLOR_RGB2GRAY);
         //Imgproc.GaussianBlur(mat,mat,new Size(13,13),0,0);
         //Imgproc.Canny(mat,mat,70,210);
-        Core.bitwise_not(mat,mat);//bitwise_not是对二进制数据进行“非”操作，即对图像（灰度图像或彩色图像均可）每个像素值进行二进制“非”操作，~1=0，~0=1
+        Core.bitwise_not(mat,mat);//颜色取反
         Imgproc.threshold(mat,mat,120,255,Imgproc.THRESH_BINARY_INV);
         Utils.matToBitmap(mat,thes);
         return thes;
@@ -159,8 +159,8 @@ public class PhotoFunction {
     }
 
 
-    //熔铸滤镜(换成了宝丽来滤镜）
-    public Bitmap RongZhu(Bitmap photo){
+    //宝丽来滤镜
+    public Bitmap Polaroid(Bitmap photo){
         int w = photo.getWidth();
         int h = photo.getHeight();
         int[] pixels = new int[w * h];
@@ -170,10 +170,6 @@ public class PhotoFunction {
         Bitmap resultBitmap  = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
         for(int i = 0;i < w * h;i++){
             index = pixels[i];
-            //熔铸的原理，觉得效果不好看，颜色突兀
-//            int AR =Color.red(index)*128/(Color.blue(index)+Color.green(index)+1);
-//            int AG =Color.green(index)*128/(Color.blue(index)+Color.red(index)+1);
-//            int AB =Color.blue(index)*128/(Color.red(index)+Color.green(index)+1);
             int AR = (int) (1.438 * Color.red(index) + (-0.062) * Color.green(index) + (-0.062) * Color.blue(index));
             int AG = (int) ((-0.122) * Color.red(index) + 1.378 * Color.green(index) + (-0.122) * Color.blue(index));
             int AB = (int) ((-0.016) * Color.red(index) + (-0.016) * Color.green(index) + 1.483 * Color.blue(index));
@@ -189,8 +185,8 @@ public class PhotoFunction {
 
     }
 
-    //冰冻滤镜,改成高斯模糊
-    public Bitmap BingDong(Bitmap photo){
+    //高斯模糊
+    public Bitmap Gaussian(Bitmap photo){
         int width = photo.getWidth();
         int height = photo.getHeight();
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -209,8 +205,6 @@ public class PhotoFunction {
         Bitmap fudiao  = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.ARGB_8888);
         for(int i = 1;i<photo.getHeight()-1;i++){
             for( int j = 1;j<photo.getWidth()-1;j++){
-                //int A = photo.getPixel(i-1,j-1);
-                //int B = photo.getPixel(i+1,j+1);
                 int A = pixels[(i-1)*photo.getWidth() + j - 1];
                 int B = pixels[(i+1)*photo.getWidth() + j + 1];
                 int AR =Color.red(B)-Color.red(A)+128;
@@ -225,6 +219,88 @@ public class PhotoFunction {
         fudiao.setPixels(newPixels,0,photo.getWidth(),0,0,photo.getWidth(),photo.getHeight());
         return fudiao;
     }
+
+
+    //横风滤镜
+    public Bitmap Wind(Bitmap photo){
+        int w = photo.getWidth();
+        int h = photo.getHeight();
+        int[] pixels = new int[w * h];
+        int[] newPixels = new int[w * h];
+        photo.getPixels(pixels,0,w,0,0,w,h);//取得photo像素矩阵（其实是数组）到pixels
+        Bitmap resultBitmap  = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        for(int i = 0;i< w * h ; i = i + 501){
+            for(int j = i ; j < i+50 && j < w*h ; j ++)
+                newPixels[j]= pixels[i];
+            for(int k = i+50 ; k < i+501 && k < w*h ; k++)
+                newPixels[k] = pixels[k];
+        }
+        resultBitmap.setPixels(newPixels,0,w,0,0,w,h);
+        return resultBitmap;
+
+    }
+
+
+
+
+        /*  opencv提供的 color map 返回值与效果
+          0：冬天 冰蓝 有点刺眼
+          1: 优雅棕 好好看 √
+          2：彩虹色 就是热带图那种
+          3：绿红色
+          4：这个跟2的彩虹色差不多
+          5：秋天 深棕的
+          6: 夏天 绿色的 还行 √
+          7：蓝粉色的 粉色比较艳丽
+          8: 黄粉色 粉色很艳丽
+          9: 恐怖的彩虹色
+          10:这个风格好看 优雅蓝色 √
+          11:深蓝色 太深了
+          */
+
+    public Bitmap Summer(Bitmap photo){
+        Bitmap resultBitmap  = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.RGB_565);
+        Mat srcMat= new Mat(photo.getWidth(), photo.getHeight(), CvType.CV_8UC3);
+        Mat gray = new Mat();
+        Utils.bitmapToMat(photo,srcMat);
+        Imgproc.cvtColor(srcMat,gray,Imgproc.COLOR_RGB2GRAY);
+        Mat dstMat= new Mat(photo.getWidth(), photo.getHeight(), CvType.CV_8UC3);
+        Imgproc.applyColorMap(gray,dstMat,6);
+        Utils.matToBitmap(dstMat,resultBitmap);
+        return resultBitmap;
+    }
+
+    public Bitmap Winter(Bitmap photo){
+        Bitmap resultBitmap  = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.RGB_565);
+        Mat srcMat= new Mat(photo.getWidth(), photo.getHeight(), CvType.CV_8UC3);
+        Mat gray = new Mat();
+        Utils.bitmapToMat(photo,srcMat);
+        Imgproc.cvtColor(srcMat,gray,Imgproc.COLOR_RGB2GRAY);
+        Mat dstMat= new Mat(photo.getWidth(), photo.getHeight(), CvType.CV_8UC3);
+        Imgproc.applyColorMap(gray,dstMat,10);
+        Utils.matToBitmap(dstMat,resultBitmap);
+        return resultBitmap;
+    }
+
+    public Bitmap Cloudy(Bitmap photo){
+        Bitmap resultBitmap  = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.RGB_565);
+        Mat srcMat= new Mat(photo.getWidth(), photo.getHeight(), CvType.CV_8UC3);
+        Mat gray = new Mat();
+        Utils.bitmapToMat(photo,srcMat);
+        Imgproc.cvtColor(srcMat,gray,Imgproc.COLOR_RGB2GRAY);
+        Mat dstMat= new Mat(photo.getWidth(), photo.getHeight(), CvType.CV_8UC3);
+        Imgproc.applyColorMap(gray,dstMat,1);
+        Utils.matToBitmap(dstMat,resultBitmap);
+        return resultBitmap;
+    }
+
+
+
+
+
+
+
+
 
     //美颜1 基于双边滤波和高斯模糊
     public Bitmap Beauty(Bitmap photo , Float... f) {
@@ -260,9 +336,9 @@ public class PhotoFunction {
             Imgproc.GaussianBlur(matGaussSrc, matGaussDest, new Size(2 * f[0] - 1, 2 * f[0] - 1), 0, 0);
             matGaussDest.convertTo(matTmpSrc, matGaussDest.type(), 2, -255);
             Core.add(image, matTmpSrc, matTmpDest);
-            Core.addWeighted(image, p, matTmpDest, 1 - p, 0.0, dst);
+            Core.addWeighted(image, p, matTmpDest, 1 - p, 0.0, dst);//权重叠加
 
-            Core.add(dst, new Scalar(10, 10, 10), dst);
+            Core.add(dst, new Scalar(10, 10, 10), dst);//提升亮度
             Utils.matToBitmap(dst, resultBitmap);
 
         }
@@ -270,7 +346,7 @@ public class PhotoFunction {
     }
 
 
-    //美颜效果2 基于...很多算法，有点麻烦            **************************************
+    //  美颜效果2    **************************************
     public Bitmap Beauty2(Bitmap photo){
 
         Mat src = new Mat();
@@ -296,6 +372,7 @@ public class PhotoFunction {
         Imgproc.bilateralFilter(src, dst, 20, 55, 55);
         blendImage(src, dst, mask);
         enhanceEdge(src, dst, mask);
+        Core.add(dst, new Scalar(10, 10, 10), dst);//提升亮度
 
         // 转换为Bitmap，显示
         Bitmap bm = Bitmap.createBitmap(src.cols(), src.rows(), Bitmap.Config.ARGB_8888);
@@ -391,47 +468,10 @@ public class PhotoFunction {
     }
 
     private void enhanceEdge(Mat src, Mat dst, Mat mask) {
-        Imgproc.Canny(src, mask, 150, 300, 3, true);
+        Imgproc.Canny(src, mask, 50, 300, 3, true);
         Core.bitwise_and(src, src, dst, mask);
-        Imgproc.GaussianBlur(dst, dst, new Size(3, 3), 0.0);
+        //Imgproc.GaussianBlur(dst, dst, new Size(3, 3), 0.0);
     }
 
-
-    private void blur_demo(Mat src, Mat sum, Mat dst) {
-        int w = src.cols();
-        int h = src.rows();
-        int x2 = 0, y2 = 0;
-        int x1 = 0, y1 = 0;
-        int ksize = 15;
-        int radius = ksize / 2;
-        int ch = src.channels();
-        byte[] data = new byte[ch*w*h];
-        int[] tl = new int[3];
-        int[] tr = new int[3];
-        int[] bl = new int[3];
-        int[] br = new int[3];
-        int cx = 0;
-        int cy = 0;
-        for (int row = 0; row < h+radius; row++) {
-            y2 = (row+1)>h?h:(row+1);
-            y1 = (row - ksize) < 0 ? 0 : (row - ksize);
-            for (int col = 0; col < w+radius; col++) {
-                x2 = (col+1)>w?w:(col+1);
-                x1 = (col - ksize) < 0 ? 0 : (col - ksize);
-                sum.get(y1, x1,tl);
-                sum.get(y2, x1,tr);
-                sum.get(y1, x2,bl);
-                sum.get(y2, x2,br);
-                cx = (col - radius) < 0 ? 0 : col - radius;
-                cy = (row - radius) < 0 ? 0 : row - radius;
-                for (int i = 0; i < ch; i++) {
-                    int num = (x2 - x1)*(y2 - y1);
-                    int x = (br[i] - bl[i] - tr[i] + tl[i]) / num;
-                    data[cy*ch*w + cx*ch+i] = (byte)x;
-                }
-            }
-        }
-        dst.put(0, 0, data);
-    }
 
 }
